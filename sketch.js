@@ -39,12 +39,22 @@ function draw() {
   );
   ctx.fill();
 
+  if (!checkFullScreen()) {
+    ctx.font = "36px NotoSans";
+    ctx.fillStyle = "black";
+    ctx.fillText("画面をダブルクリックしてください", canvas.clientWidth / 2 - 36 * 8, canvas.clientHeight / 2);
+    ctx.fill();
+    return;
+  }
+
+
   for (let i = 0; i < cursors.length; i++) {
     let c = cursors[i];
     c.update(movementX, movementY);
     c.checkEdges();
     c.display(ctx);
   }
+
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, windowLeft, canvas.clientHeight);
   ctx.fillRect(
@@ -67,6 +77,8 @@ function draw() {
   );
 
   ctx.fillText("※実際の実験環境とは異なります", 10, canvas.height - 200);
+  ctx.fill();
+
 }
 
 function initCursors() {
@@ -92,6 +104,39 @@ function initCursors() {
 }
 
 /*
+ *fullScreen
+ */
+
+function fullscreen() {
+  let el = document.getElementById('canvas');
+
+  if (el.webkitRequestFullScreen) {
+    el.webkitRequestFullScreen();
+  }
+  else {
+    el.mozRequestFullScreen();
+  }
+  draw();
+}
+
+canvas.addEventListener("click", fullscreen)
+
+function checkFullScreen() {
+
+  var fullscreen_flag = false;
+  if (document.fullscreenElement || document.mozFullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+    fullscreen_flag = true;
+  }
+  return fullscreen_flag;
+}
+
+//フルスクリーンの開始と解除時に発動
+document.addEventListener("fullscreenchange", draw, false);
+document.addEventListener("webkitfullscreenchange", draw, false);
+document.addEventListener("mozfullscreenchange", draw, false);
+
+
+/*
  *キーボード操作
  */
 document.addEventListener(
@@ -108,6 +153,7 @@ document.addEventListener(
     if (keyName === "s") {
       cursors[0].showCursor = true;
     }
+
 
     for (let i = 0; i < cursorSize.length; i++) {
       if (keyName === String(i + 1)) {
