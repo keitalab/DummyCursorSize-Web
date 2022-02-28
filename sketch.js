@@ -94,7 +94,7 @@ function initCursors() {
     c.xMax = canvas.width - windowLeft;
     c.yMin = 0;
     c.yMax = canvas.height;
-    c.size = cursorSize[cursorSizeIndex];
+    c.size = cursorSize[cursorSizeIndex] * 2;
 
     cursors[i] = c;
   }
@@ -156,7 +156,7 @@ document.addEventListener(
       if (keyName === String(i + 1)) {
         cursorSizeIndex = i;
         cursors.forEach(function (cursor) {
-          cursor.size = cursorSize[cursorSizeIndex];
+          cursor.size = cursorSize[cursorSizeIndex] * 2;
         });
       }
     }
