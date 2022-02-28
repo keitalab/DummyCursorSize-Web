@@ -5,6 +5,7 @@ class Vector {
     constructor(_x, _y) {
         this.x = _x;
         this.y = _y;
+        this.showCursor = false;
     }
 
     add(vec) {
@@ -29,13 +30,15 @@ class Cursor {
 
     display(_ctx) {
         if (this.showCursor) {
-            _ctx.fillStyle = "#f00";
+            this.fillStyle = "#f00";
         } else {
-            _ctx.fillStyle = "#000";
+            this.fillStyle = "#000";
         }
-        _ctx.beginPath();
-        _ctx.arc(this.location.x, this.location.y, this.size / 2, 0, 2 * Math.PI, true);
+
+        _ctx.fillStyle = this.fillStyle;
+        _ctx.arc(this.location.x, this.location.y, this.size / 2, 0, 2 * Math.PI, false);
         _ctx.fill();
+        _ctx.beginPath();
     }
 
     checkEdges() {

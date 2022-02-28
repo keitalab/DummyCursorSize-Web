@@ -2,11 +2,12 @@ window.addEventListener("load", eventWindowLoaded, false);
 let canvas = document.querySelector("canvas");
 let ctx = canvas.getContext("2d");
 
-let cursors = new Array(9); //0:リアルカーソル, 0以外: ダミーカーソル
+let cursors = new Array(10); //0:リアルカーソル, 0以外: ダミーカーソル
 let windowLeft = 0;
 let movementX = 0;
 let movementY = 0;
 let cursorSize = [1, 10, 50, 189, 377, 566, 754, 1080];
+let cursorSizeIndex = 1;
 
 function eventWindowLoaded() {
   setup();
@@ -48,14 +49,15 @@ function draw() {
   }
 
 
-  for (let i = 0; i < cursors.length; i++) {
-    let c = cursors[i];
-    c.update(movementX, movementY);
-    c.checkEdges();
-    c.display(ctx);
-  }
+  cursors.forEach(function (cursor) {
+    cursor.update(movementX, movementY);
+    cursor.checkEdges();
+    cursor.display(ctx);
+  });
+
 
   ctx.fillStyle = "black";
+  // ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
   ctx.fillRect(0, 0, windowLeft, canvas.clientHeight);
   ctx.fillRect(
     canvas.width - windowLeft,
@@ -63,19 +65,14 @@ function draw() {
     canvas.clientWidth,
     canvas.clientHeight
   );
+  ctx.fill();
 
   ctx.font = "18px NotoSans";
   ctx.fillStyle = "white";
   ctx.fillText("キーボード操作", 10, 50);
   ctx.fillText("r:リセット", 10, 80);
   ctx.fillText("s:自身のカーソルを表示", 10, 110);
-
-  ctx.fillText(
-    "1~" + String(cursorSize.length) + ":カーソルの大きさを変更",
-    10,
-    140
-  );
-
+  ctx.fillText("1~" + String(cursorSize.length) + ":カーソルの大きさを変更", 10, 140);
   ctx.fillText("※実際の実験環境とは異なります", 10, canvas.height - 200);
   ctx.fill();
 
@@ -90,14 +87,14 @@ function initCursors() {
     if (i == 0) {
       c.moveRad = degToRad(0);
     } else {
-      c.moveRad = degToRad(45 + i * 30);
+      c.moveRad = degToRad(45 + (i - 1) * 30);
     }
-    c.id = i;
+
     c.xMin = windowLeft;
     c.xMax = canvas.width - windowLeft;
     c.yMin = 0;
     c.yMax = canvas.height;
-    c.size = 10;
+    c.size = cursorSize[cursorSizeIndex];
 
     cursors[i] = c;
   }
@@ -157,8 +154,9 @@ document.addEventListener(
 
     for (let i = 0; i < cursorSize.length; i++) {
       if (keyName === String(i + 1)) {
+        cursorSizeIndex = i;
         cursors.forEach(function (cursor) {
-          cursor.size = cursorSize[i];
+          cursor.size = cursorSize[cursorSizeIndex];
         });
       }
     }
