@@ -6,7 +6,7 @@ let cursors = new Array(9); //0:リアルカーソル, 0以外: ダミーカー�
 let windowLeft = 0;
 let movementX = 0;
 let movementY = 0;
-let cursorSize = [1, 10, 189, 377, 566, 754, 1080];
+let cursorSize = [1, 10, 50, 189, 377, 566, 754, 1080];
 
 function eventWindowLoaded() {
   setup();
