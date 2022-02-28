@@ -1,8 +1,9 @@
-#canvas{
-	display: block;
+#canvas {
+  display: block;
 }
 
-html, body {
-    height: 100%;
-    margin: 0;
-  }
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
