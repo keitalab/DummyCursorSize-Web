@@ -45,6 +45,14 @@ function draw() {
     c.checkEdges();
     c.display(ctx);
   }
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, windowLeft, canvas.clientHeight);
+  ctx.fillRect(
+    canvas.width - windowLeft,
+    0,
+    canvas.clientWidth,
+    canvas.clientHeight
+  );
 
   ctx.font = "18px NotoSans";
   ctx.fillStyle = "white";
