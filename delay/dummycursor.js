@@ -34,7 +34,7 @@ class Cursor {
         } else {
             this.fillStyle = "#000";
         }
-
+        _ctx.beginPath();
         _ctx.fillStyle = this.fillStyle;
         _ctx.arc(this.location.x, this.location.y, this.size / 2, 0, 2 * Math.PI, false);
         _ctx.fill();

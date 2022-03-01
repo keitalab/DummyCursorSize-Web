@@ -4,20 +4,19 @@ let ctx = canvas.getContext("2d");
 
 let cursors = new Array(10); //0:リアルカーソル, 0以外: ダミーカーソル
 let windowLeft = 0;
-let movementX = 0;
-let movementY = 0;
-let cursorSize = [1, 10, 50, 189, 377, 566, 754, 1080];
-let cursorSizeIndex = 1;
+let delays = [0, 100, 200, 300, 400];
+let delayIndex = 0;
 
 function eventWindowLoaded() {
   setup();
-  draw();
+  draw(0, 0);
 }
 
 function canvasLoop(e) {
-  movementX = e.movementX || e.mozMovementX || 0;
-  movementY = e.movementY || e.mozMovementY || 0;
-  draw();
+  let movementX = e.movementX || e.mozMovementX || 0;
+  let movementY = e.movementY || e.mozMovementY || 0;
+  console.log(movementX, movementY);
+  setTimeout(() => { draw(movementX, movementY) }, delays[delayIndex]);
 }
 
 function setup() {
@@ -28,7 +27,7 @@ function setup() {
   initCursors();
 }
 
-function draw() {
+function draw(movementX, movementY) {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
   ctx.fillStyle = "white";
@@ -47,17 +46,23 @@ function draw() {
     ctx.fill();
     return;
   }
+  // console.log(movementX, movementY);
 
 
-  cursors.forEach(function (cursor) {
+  // ctx.fillStyle = "black";
+  // ctx.arc(canvas.width / 2, canvas.height / 2, 50, 0, 2 * Math.PI, false);
+  // ctx.fill();
+  ctx.beginPath();
+  cursors.forEach((cursor) => {
     cursor.update(movementX, movementY);
     cursor.checkEdges();
     cursor.display(ctx);
   });
 
+  ctx.beginPath();
+
 
   ctx.fillStyle = "black";
-  // ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
   ctx.fillRect(0, 0, windowLeft, canvas.clientHeight);
   ctx.fillRect(
     canvas.width - windowLeft,
@@ -67,13 +72,20 @@ function draw() {
   );
   ctx.fill();
 
-  ctx.font = "18px NotoSans";
+  ctx.font = "24px NotoSans";
   ctx.fillStyle = "white";
-  ctx.fillText("キーボード操作", 10, 50);
+  ctx.fillText("キーボード操作方法", 10, 50);
+  ctx.font = "18px NotoSans";
   ctx.fillText("r:リセット", 10, 80);
   ctx.fillText("s:自身のカーソルを表示", 10, 110);
-  ctx.fillText("1~" + String(cursorSize.length) + ":カーソルの大きさを変更", 10, 140);
+  ctx.fillText("1~" + String(delays.length) + ":カーソル遅延を変更", 10, 140);
   ctx.fillText("※実際の実験環境とは異なります", 10, canvas.height - 200);
+  ctx.font = "24px NotoSans";
+  if (delayIndex == 0) {
+    ctx.fillText("遅延なし", canvas.width - windowLeft + 10, 50);
+  } else {
+    ctx.fillText("遅延あり: " + String(delays[delayIndex]), canvas.width - windowLeft + 10, 50);
+  }
   ctx.fill();
 
 }
@@ -94,7 +106,11 @@ function initCursors() {
     c.xMax = canvas.width - windowLeft;
     c.yMin = 0;
     c.yMax = canvas.height;
-    c.size = cursorSize[cursorSizeIndex] * 2;
+    c.size = 50;
+
+    c.checkEdges();
+
+    console.log(c.location.x, c.location.y);
 
     cursors[i] = c;
   }
@@ -113,7 +129,7 @@ function fullscreen() {
   else {
     el.mozRequestFullScreen();
   }
-  draw();
+  // draw(0, 0);
 }
 
 canvas.addEventListener("click", fullscreen)
@@ -128,9 +144,9 @@ function checkFullScreen() {
 }
 
 //フルスクリーンの開始と解除時に発動
-document.addEventListener("fullscreenchange", draw, false);
-document.addEventListener("webkitfullscreenchange", draw, false);
-document.addEventListener("mozfullscreenchange", draw, false);
+document.addEventListener("fullscreenchange", () => { draw(0, 0) }, false);
+document.addEventListener("webkitfullscreenchange", () => { draw(0, 0) }, false);
+document.addEventListener("mozfullscreenchange", () => { draw(0, 0) }, false);
 
 
 /*
@@ -144,24 +160,21 @@ document.addEventListener(
     //カーソルリセット
     if (keyName === "r") {
       initCursors();
+      draw(0, 0);
     }
 
     //リアルカーソルだけ赤くする
     if (keyName === "s") {
       cursors[0].showCursor = true;
+      draw(0, 0);
     }
 
 
-    for (let i = 0; i < cursorSize.length; i++) {
+    for (let i = 0; i < delays.length; i++) {
       if (keyName === String(i + 1)) {
-        cursorSizeIndex = i;
-        cursors.forEach(function (cursor) {
-          cursor.size = cursorSize[cursorSizeIndex] * 2;
-        });
+        delayIndex = i;
       }
     }
-
-    draw();
   },
   false
 );
